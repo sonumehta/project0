@@ -47,8 +47,9 @@ void init(hashtable** ht) {
 	
 	*ht = (hashtable*) malloc(sizeof(hashtable));
 	
-	int N = 17;
-	for (int i=0; i<N; i++)
+	int array_size = 1009;
+	(*ht)->array_size = array_size;
+	for (int i=0; i<array_size; i++)
 	{
 		(*ht)->array[i] = NULL;	
 	}
@@ -58,10 +59,11 @@ void init(hashtable** ht) {
 
 // insert a key-value pair into the hash table
 void put(hashtable* ht, keyType key, valType value) {
-    int N = 17;
+    int N = ht->array_size;
 	int slot = key%N;
 	ht->array[slot] = insert(ht->array[slot], key, value); 
-	printf("key: %d, slot: %d", key, slot);
+	//printf("key: %d, slot: %d", key, slot);
+	ht->no_of_elements +=1;
 }
 
 // get entries with a matching key and stores the corresponding values in the
@@ -76,7 +78,7 @@ int get(hashtable* ht, keyType key, valType *values, int num_values) {
     (void) key;
     (void) values;
     (void) num_values;
-	int N = 17;
+	int N = ht->array_size;
 	int slot = key%N;
 	
 	int i = 0;
@@ -98,4 +100,31 @@ int get(hashtable* ht, keyType key, valType *values, int num_values) {
 void erase(hashtable* ht, keyType key) {
     (void) ht;
     (void) key;
+	int N = ht->array_size;
+	int slot = key%N;
+	node* delnode = NULL;
+	
+	node* temp = ht->array[slot];
+	if(temp != NULL && temp->key == key)
+	{
+		delnode = temp;
+		ht->array[slot]= ht->array[slot]->next;
+		free(delnode);
+	}
+	else
+	{
+		while(temp->next == NULL)
+		{
+			if(temp->next->key == key)
+			{
+				delnode = temp->next;
+				temp->next = temp->next->next;
+				free(delnode);
+				break;
+			}
+			temp = temp->next;
+		}
+	}
+	
+
 }

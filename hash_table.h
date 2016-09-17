@@ -14,8 +14,9 @@ typedef struct node node;
 
 typedef struct hashtable {
 // define the components of the hash table here (e.g. the array, bookkeeping for number of elements, etc)
-	struct node* array[17];
+	struct node* array[1009];
 	int no_of_elements;
+	int array_size;
 	
 } hashtable;
 

@@ -32,6 +32,9 @@ int main(void) {
   free(values);
 
   erase(ht, 0);
+  num_results = get(ht, key, values, num_values);
+  printf("%d any num", num_results);
+  
 
   free(ht);
   return 0;
