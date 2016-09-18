@@ -2,6 +2,8 @@
 	#include<stdlib.h>
 	#include<stdio.h>
 	// insert an element in linked list
+
+
 node* insert(node* head, int key, int value)
 {
 	node* newnode = (node*)malloc(sizeof(node));
@@ -47,12 +49,15 @@ void init(hashtable** ht) {
 	
 	*ht = (hashtable*) malloc(sizeof(hashtable));
 	
+	
 	int array_size = 1009;
+	(*ht)->array = malloc(sizeof(node*)* array_size);
 	(*ht)->array_size = array_size;
 	for (int i=0; i<array_size; i++)
 	{
 		(*ht)->array[i] = NULL;	
 	}
+	
 	(*ht)->no_of_elements = 0;
 	
 }
@@ -62,7 +67,8 @@ void put(hashtable* ht, keyType key, valType value) {
     int N = ht->array_size;
 	int slot = key%N;
 	ht->array[slot] = insert(ht->array[slot], key, value); 
-	//printf("key: %d, slot: %d", key, slot);
+	
+	//printf("key: %d, slot: %d", ht->array1[slot]->key, ht->array1[slot]->value);
 	ht->no_of_elements +=1;
 }
 
@@ -82,6 +88,7 @@ int get(hashtable* ht, keyType key, valType *values, int num_values) {
 	int slot = key%N;
 	
 	int i = 0;
+	
 	node* temp = ht->array[slot];
 	while(temp!= NULL)
 	{
@@ -93,6 +100,7 @@ int get(hashtable* ht, keyType key, valType *values, int num_values) {
 		}
 		temp = temp->next;
 	}
+	
     return i;
 }
 
@@ -110,6 +118,7 @@ void erase(hashtable* ht, keyType key) {
 		delnode = temp;
 		ht->array[slot]= ht->array[slot]->next;
 		free(delnode);
+		ht->no_of_elements -=1;
 	}
 	else
 	{
@@ -120,6 +129,7 @@ void erase(hashtable* ht, keyType key) {
 				delnode = temp->next;
 				temp->next = temp->next->next;
 				free(delnode);
+				ht->no_of_elements -=1;
 				break;
 			}
 			temp = temp->next;
