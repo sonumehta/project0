@@ -2,8 +2,9 @@
 #define HASH_TABLE_GUARD
 
 typedef struct node {
-	int key;
-	int value;
+	int key[2];
+	int value[2];
+	int filled;	// to keep track if both the elements are there.
 	struct node* next;
 }node;
 

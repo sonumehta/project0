@@ -6,37 +6,80 @@
 
 node* insert(node* head, int key, int value)
 {
+	if(head && !(head->filled))
+	{
+		head->key[1] = key;
+		head->value[1] = value;
+		head->filled = 1;
+		return head;
+	}
+	
 	node* newnode = (node*)malloc(sizeof(node));
-	newnode->key = key;
-	newnode->value = value;
+	newnode->key[0] = key;
+	newnode->value[0] = value;
+	newnode->filled = 0;	
 		
 	newnode->next = head;
 	head = newnode;
 	
 	return head;
 }
-	// delete an element from linked list
-node* delete(node* head, int key)
+	// delete a key from linked list
+node* delete_key(node* head, int key)
 {
-	node* temp = head;
+	
 	node* del_node = NULL;
 	if(!head)
 		return head;
-	if(head->key == key)
+	if(head->key[0] == key)
 	{
-		del_node = head;
-		head = head->next;
+		if((!(head->filled)) || (head->filled && head->key[1] == key))
+		{
+			del_node = head;
+			head = head->next;
+			free(del_node);
+		}
+		else
+		{
+			head->key[0] = head->key[1];
+			head->value[0] = head->value[1];
+			head->filled = 0;
+		}
+		
 	}
-	while(temp->next!=NULL && temp->next->key != key)
+	else if(head->filled && head->key[1] == key)
 	{
+		head->filled = 0;
+	}
+	
+	node* temp = head;
+	while(temp && temp->next)
+	{
+		if(temp->next->key[0] == key)
+		{
+			if(temp->next->filled)
+			{
+				if(temp->next->key[1] == key)
+				{
+					del_node = temp->next;
+					temp->next = temp->next->next;
+					free(del_node);
+				}
+				else
+				{
+					temp->next->key[0] = temp->next->key[1];
+					temp->next->value[0] = temp->next->value[1];
+				}
+			}
+		}
+		else if(temp->next->filled && temp->next->key[1] == key)
+		{
+			temp->next->filled = 0;
+		}
+			
 		temp = temp->next;
 	}
-	if(temp->next != NULL)
-	{
-		del_node = temp->next;
-		temp->next = temp->next->next;
-	}
-	free(del_node);
+	
 	return head;
 }
 
@@ -92,11 +135,15 @@ int get(hashtable* ht, keyType key, valType *values, int num_values) {
 	node* temp = ht->array[slot];
 	while(temp!= NULL)
 	{
-		if(temp->key == key)
+		if(temp->key[0] == key)
 		{
-			values[i] = temp->value;
-			
+			values[i] = temp->value[0];
 			i=i+1;
+			if(temp->filled && temp->key[1] == key)
+			{
+				values[i] = temp->value[1];
+				i=i+1;
+			}
 		}
 		temp = temp->next;
 	}
@@ -110,31 +157,10 @@ void erase(hashtable* ht, keyType key) {
     (void) key;
 	int N = ht->array_size;
 	int slot = key%N;
-	node* delnode = NULL;
 	
-	node* temp = ht->array[slot];
-	if(temp != NULL && temp->key == key)
-	{
-		delnode = temp;
-		ht->array[slot]= ht->array[slot]->next;
-		free(delnode);
-		ht->no_of_elements -=1;
-	}
-	else
-	{
-		while(temp->next == NULL)
-		{
-			if(temp->next->key == key)
-			{
-				delnode = temp->next;
-				temp->next = temp->next->next;
-				free(delnode);
-				ht->no_of_elements -=1;
-				break;
-			}
-			temp = temp->next;
-		}
-	}
+	ht->array[slot] = delete_key(ht->array[slot], key);
+	
+	ht->no_of_elements -= 1;
 	
 
 }

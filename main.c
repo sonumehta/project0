@@ -15,6 +15,7 @@ int main(void) {
   int value = -1;
   
   put(ht, key, value);
+  
 
   int num_values = 1;
 
@@ -33,7 +34,7 @@ int main(void) {
 
   erase(ht, 0);
   num_results = get(ht, key, values, num_values);
-  printf("%d any num", num_results);
+  printf(" results after erase: %d", num_results);
   
 
   free(ht);
